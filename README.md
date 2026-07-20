@@ -2,6 +2,16 @@
 
 [中文概览](#中文概览) | [English overview](#english-overview) | [中英双语使用说明 / Bilingual user guide](docs/USER_GUIDE_BILINGUAL.md)
 
+## 界面预览 / Interface previews
+
+| 中文界面 | English interface |
+|---|---|
+| ![HavenFrame 中文项目工作台](docs/screenshots/desktop-projects-zh.png) | ![HavenFrame English project workspace](docs/screenshots/desktop-projects-en.png) |
+
+两张截图来自同一份生产前端构建和隔离的空白验收数据目录，不包含 API Key、客户资料或历史任务。
+
+Both screenshots come from the same production frontend build and an isolated empty acceptance-data directory. They contain no API keys, customer data, or historical tasks.
+
 ## 中文概览
 
 HavenFrame（中文名：栖构）是面向室内设计交付的 Windows 桌面与 Android/iOS 客户端。界面支持简体中文和英文；产品功能、Provider 路由和数据结构不随界面语言改变。

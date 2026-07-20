@@ -1,0 +1,1 @@
+{"main-window":{"identifier":"main-window","description":"Core application access plus locale-aware title updates for the main window.","local":true,"windows":["main"],"permissions":["core:default","core:window:allow-set-title"]}}

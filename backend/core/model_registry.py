@@ -1,0 +1,757 @@
+import json
+from dataclasses import asdict, dataclass
+from typing import Any
+
+
+@dataclass(frozen=True)
+class ModelRegistryEntry:
+    provider_id: str
+    provider_label: str
+    provider_family: str
+    model_id: str
+    display_name: str
+    short_name: str
+    capabilities: list[str]
+    legacy_capabilities: list[str]
+    modality: list[str]
+    api_surface: str
+    recommended: bool
+    deprecated: bool
+    preview: bool
+    costly: bool
+    direct_api_supported: bool
+    relay_supported: bool
+    direct_auth_type: str
+    relay_compatibility_modes: list[str]
+    default_routing_mode: str
+    default_compatibility_mode: str
+    env_key: str | None
+    official_endpoint_family: str
+    endpoint: str
+    base_url: str
+    default_endpoint_path: str
+    request_schema_type: str
+    response_schema_type: str
+    priority: int
+    enabled: bool = True
+    hidden: bool = False
+    needs_official_id_verification: bool = False
+    status_reason: str | None = None
+    notes: str = ""
+
+
+OPENAI_DOC_NOTE = "OpenAI image generation docs list GPT Image 2 with model id gpt-image-2."
+INTERIOR_IMAGE_CAPABILITIES = ["image_generation", "image_edit", "interior_render"]
+
+
+MODEL_REGISTRY: list[ModelRegistryEntry] = [
+    ModelRegistryEntry(
+        provider_id="openai",
+        provider_label="OpenAI",
+        provider_family="openai",
+        model_id="gpt-5.5",
+        display_name="GPT-5.5",
+        short_name="GPT-5.5",
+        capabilities=["text", "vision", "reasoning"],
+        legacy_capabilities=["text", "vision"],
+        modality=["text_input", "image_input", "text_output"],
+        api_surface="openai_responses",
+        recommended=True,
+        deprecated=False,
+        preview=False,
+        costly=False,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["openai_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="OPENAI_API_KEY",
+        official_endpoint_family="openai",
+        endpoint="https://api.openai.com",
+        base_url="https://api.openai.com/v1",
+        default_endpoint_path="/responses",
+        request_schema_type="openai_responses",
+        response_schema_type="openai_text",
+        priority=15,
+        notes="Current recommended OpenAI frontier model.",
+    ),
+    ModelRegistryEntry(
+        provider_id="openai",
+        provider_label="OpenAI",
+        provider_family="openai",
+        model_id="gpt-5.4",
+        display_name="GPT-5.4",
+        short_name="GPT-5.4",
+        capabilities=["text", "vision"],
+        legacy_capabilities=["text", "vision"],
+        modality=["text_input", "image_input", "text_output"],
+        api_surface="openai_responses",
+        recommended=True,
+        deprecated=False,
+        preview=False,
+        costly=False,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["openai_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="OPENAI_API_KEY",
+        official_endpoint_family="openai",
+        endpoint="https://api.openai.com",
+        base_url="https://api.openai.com/v1",
+        default_endpoint_path="/responses",
+        request_schema_type="openai_responses",
+        response_schema_type="openai_text",
+        priority=16,
+        notes="Recommended OpenAI general text/vision model.",
+    ),
+    ModelRegistryEntry(
+        provider_id="openai",
+        provider_label="OpenAI",
+        provider_family="openai",
+        model_id="gpt-5.4-mini",
+        display_name="GPT-5.4 mini",
+        short_name="GPT-5.4 mini",
+        capabilities=["text", "vision"],
+        legacy_capabilities=["text", "vision"],
+        modality=["text_input", "image_input", "text_output"],
+        api_surface="openai_responses",
+        recommended=True,
+        deprecated=False,
+        preview=False,
+        costly=False,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["openai_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="OPENAI_API_KEY",
+        official_endpoint_family="openai",
+        endpoint="https://api.openai.com",
+        base_url="https://api.openai.com/v1",
+        default_endpoint_path="/responses",
+        request_schema_type="openai_responses",
+        response_schema_type="openai_text",
+        priority=17,
+        notes="Recommended cost-efficient OpenAI text/vision model.",
+    ),
+    ModelRegistryEntry(
+        provider_id="openai",
+        provider_label="OpenAI",
+        provider_family="openai",
+        model_id="gpt-5.4-nano",
+        display_name="GPT-5.4 nano",
+        short_name="GPT-5.4 nano",
+        capabilities=["text", "vision"],
+        legacy_capabilities=["text", "vision"],
+        modality=["text_input", "image_input", "text_output"],
+        api_surface="openai_responses",
+        recommended=True,
+        deprecated=False,
+        preview=False,
+        costly=False,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["openai_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="OPENAI_API_KEY",
+        official_endpoint_family="openai",
+        endpoint="https://api.openai.com",
+        base_url="https://api.openai.com/v1",
+        default_endpoint_path="/responses",
+        request_schema_type="openai_responses",
+        response_schema_type="openai_text",
+        priority=18,
+        notes="Recommended low-cost OpenAI text/vision model.",
+    ),
+    ModelRegistryEntry(
+        provider_id="zhipu_glm",
+        provider_label="Zhipu GLM Mainland",
+        provider_family="zhipu",
+        model_id="glm-4.5v",
+        display_name="GLM-4.5V 多模态",
+        short_name="GLM-4.5V",
+        capabilities=["text", "vision"],
+        legacy_capabilities=["text", "vision"],
+        modality=["text_input", "image_input", "text_output"],
+        api_surface="openai_compatible",
+        recommended=True,
+        deprecated=False,
+        preview=False,
+        costly=False,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["openai_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="ZHIPU_API_KEY",
+        official_endpoint_family="zhipu",
+        endpoint="https://open.bigmodel.cn/api/paas/v4",
+        base_url="https://open.bigmodel.cn/api/paas/v4",
+        default_endpoint_path="/chat/completions",
+        request_schema_type="openai_chat_completions",
+        response_schema_type="openai_text",
+        priority=19,
+        notes="GLM multimodal model for item extraction through OpenAI-compatible chat completions.",
+    ),
+    ModelRegistryEntry(
+        provider_id="zai_glm",
+        provider_label="Z.AI International",
+        provider_family="zai",
+        model_id="glm-4.5v",
+        display_name="GLM-4.5V Multimodal (International)",
+        short_name="GLM-4.5V International",
+        capabilities=["text", "vision"],
+        legacy_capabilities=["text", "vision"],
+        modality=["text_input", "image_input", "text_output"],
+        api_surface="openai_compatible",
+        recommended=False,
+        deprecated=False,
+        preview=False,
+        costly=False,
+        direct_api_supported=True,
+        relay_supported=False,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=[],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="ZAI_API_KEY",
+        official_endpoint_family="zai",
+        endpoint="https://api.z.ai/api/paas/v4",
+        base_url="https://api.z.ai/api/paas/v4",
+        default_endpoint_path="/chat/completions",
+        request_schema_type="openai_chat_completions",
+        response_schema_type="openai_text",
+        priority=20,
+        notes="International Z.AI GLM multimodal extraction endpoint using Chat Completions.",
+    ),
+    ModelRegistryEntry(
+        provider_id="openai",
+        provider_label="OpenAI",
+        provider_family="openai",
+        model_id="gpt-image-1.5",
+        display_name="GPT Image 1.5",
+        short_name="GPT Image 1.5",
+        capabilities=INTERIOR_IMAGE_CAPABILITIES,
+        legacy_capabilities=["text_to_image", "image_to_image", "inpaint"],
+        modality=["text_input", "image_input", "image_output"],
+        api_surface="openai_images_or_responses",
+        recommended=False,
+        deprecated=False,
+        preview=False,
+        costly=True,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["openai_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="OPENAI_API_KEY",
+        official_endpoint_family="openai",
+        endpoint="https://api.openai.com",
+        base_url="https://api.openai.com/v1",
+        default_endpoint_path="/images/generations",
+        request_schema_type="openai_image_generation",
+        response_schema_type="openai_image",
+        priority=26,
+        notes="Image model; live generation skipped unless explicitly enabled.",
+    ),
+    ModelRegistryEntry(
+        provider_id="openai",
+        provider_label="OpenAI",
+        provider_family="openai",
+        model_id="gpt-image-2",
+        display_name="GPT Image 2",
+        short_name="GPT Image 2",
+        capabilities=INTERIOR_IMAGE_CAPABILITIES,
+        legacy_capabilities=["text_to_image", "image_to_image", "inpaint"],
+        modality=["text_input", "image_input", "image_output"],
+        api_surface="openai_images_or_responses",
+        recommended=True,
+        deprecated=False,
+        preview=False,
+        costly=True,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["openai_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="OPENAI_API_KEY",
+        official_endpoint_family="openai",
+        endpoint="https://api.openai.com",
+        base_url="https://api.openai.com/v1",
+        default_endpoint_path="/images/generations",
+        request_schema_type="openai_image_generation",
+        response_schema_type="openai_image",
+        priority=20,
+        enabled=True,
+        needs_official_id_verification=False,
+        status_reason=None,
+        notes="OpenAI image generation model; live generation skipped unless explicitly enabled.",
+    ),
+    ModelRegistryEntry(
+        provider_id="google_gemini",
+        provider_label="Google Gemini",
+        provider_family="gemini",
+        model_id="gemini-3.1-pro-preview",
+        display_name="Gemini 3.1 Pro Preview",
+        short_name="Gemini 3.1 Pro",
+        capabilities=["text", "vision", "reasoning"],
+        legacy_capabilities=["text", "vision"],
+        modality=["text_input", "image_input", "audio_input", "pdf_input", "text_output"],
+        api_surface="gemini_generate_content",
+        recommended=True,
+        deprecated=False,
+        preview=True,
+        costly=False,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["gemini_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="GEMINI_API_KEY",
+        official_endpoint_family="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        default_endpoint_path="/models/gemini-3.1-pro-preview:generateContent",
+        request_schema_type="gemini_generate_content",
+        response_schema_type="gemini_candidates_text",
+        priority=9,
+        notes="Current recommended Gemini Pro preview text/vision model.",
+    ),
+    ModelRegistryEntry(
+        provider_id="google_gemini",
+        provider_label="Google Gemini",
+        provider_family="gemini",
+        model_id="gemini-3-pro-image",
+        display_name="Gemini 3 Pro Image (Nano Banana Pro)",
+        short_name="Nano Banana Pro",
+        capabilities=INTERIOR_IMAGE_CAPABILITIES + ["multi_image_composition"],
+        legacy_capabilities=["text_to_image", "image_to_image", "multi_image_composition"],
+        modality=["text_input", "image_input", "image_output"],
+        api_surface="gemini_generate_content",
+        recommended=False,
+        deprecated=False,
+        preview=False,
+        costly=True,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["gemini_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="GEMINI_API_KEY",
+        official_endpoint_family="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        default_endpoint_path="/models/gemini-3-pro-image:generateContent",
+        request_schema_type="gemini_generate_content",
+        response_schema_type="gemini_candidates_text_or_image",
+        priority=10,
+        enabled=False,
+        hidden=True,
+        status_reason="历史非 Preview 别名不再作为栖构图片生成预设。",
+        notes="Gemini native image model. Google docs also reference Nano Banana Pro naming for Gemini image generation.",
+    ),
+    ModelRegistryEntry(
+        provider_id="google_gemini",
+        provider_label="Google Gemini",
+        provider_family="gemini",
+        model_id="gemini-3-pro-image-preview",
+        display_name="Gemini 3 Pro Image Preview (Nano Banana Pro)",
+        short_name="Nano Banana Pro",
+        capabilities=["image_generation", "image_edit", "multi_image_composition"],
+        legacy_capabilities=["text_to_image", "image_to_image", "multi_image_composition"],
+        modality=["text_input", "image_input", "image_output"],
+        api_surface="gemini_generate_content",
+        recommended=True,
+        deprecated=False,
+        preview=True,
+        costly=True,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["gemini_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="GEMINI_API_KEY",
+        official_endpoint_family="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        default_endpoint_path="/models/gemini-3-pro-image-preview:generateContent",
+        request_schema_type="gemini_generate_content",
+        response_schema_type="gemini_candidates_text_or_image",
+        priority=11,
+        notes="Official Gemini API image model. Image calls are cost-risk skipped by default.",
+    ),
+    ModelRegistryEntry(
+        provider_id="google_gemini",
+        provider_label="Google Gemini",
+        provider_family="gemini",
+        model_id="gemini-3-flash-preview",
+        display_name="Gemini 3 Flash Preview",
+        short_name="Gemini 3 Flash",
+        capabilities=["text", "vision"],
+        legacy_capabilities=["text", "vision"],
+        modality=["text_input", "image_input", "audio_input", "pdf_input", "text_output"],
+        api_surface="gemini_generate_content",
+        recommended=True,
+        deprecated=False,
+        preview=True,
+        costly=False,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["gemini_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="GEMINI_API_KEY",
+        official_endpoint_family="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        default_endpoint_path="/models/gemini-3-flash-preview:generateContent",
+        request_schema_type="gemini_generate_content",
+        response_schema_type="gemini_candidates_text",
+        priority=20,
+        notes="Fast Gemini 3 text/vision model; no image output.",
+    ),
+    ModelRegistryEntry(
+        provider_id="google_gemini",
+        provider_label="Google Gemini",
+        provider_family="gemini",
+        model_id="gemini-3.1-flash-lite-preview",
+        display_name="Gemini 3.1 Flash-Lite Preview",
+        short_name="Gemini 3.1 Flash-Lite",
+        capabilities=["text", "vision"],
+        legacy_capabilities=["text", "vision"],
+        modality=["text_input", "image_input", "text_output"],
+        api_surface="gemini_generate_content",
+        recommended=True,
+        deprecated=False,
+        preview=True,
+        costly=False,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["gemini_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="GEMINI_API_KEY",
+        official_endpoint_family="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        default_endpoint_path="/models/gemini-3.1-flash-lite-preview:generateContent",
+        request_schema_type="gemini_generate_content",
+        response_schema_type="gemini_candidates_text",
+        priority=21,
+        notes="Low-cost Gemini text/vision preset.",
+    ),
+    ModelRegistryEntry(
+        provider_id="google_gemini",
+        provider_label="Google Gemini",
+        provider_family="gemini",
+        model_id="gemini-2.5-flash-image",
+        display_name="Gemini 2.5 Flash Image (Nano Banana)",
+        short_name="Nano Banana",
+        capabilities=INTERIOR_IMAGE_CAPABILITIES,
+        legacy_capabilities=["text_to_image", "image_to_image"],
+        modality=["text_input", "image_input", "image_output"],
+        api_surface="gemini_generate_content",
+        recommended=False,
+        deprecated=False,
+        preview=False,
+        costly=True,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["gemini_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="GEMINI_API_KEY",
+        official_endpoint_family="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        default_endpoint_path="/models/gemini-2.5-flash-image:generateContent",
+        request_schema_type="gemini_generate_content",
+        response_schema_type="gemini_candidates_text_or_image",
+        priority=30,
+        notes="Stable Gemini native image fallback.",
+    ),
+    ModelRegistryEntry(
+        provider_id="google_gemini",
+        provider_label="Google Gemini",
+        provider_family="gemini",
+        model_id="gemini-3.1-flash-image-preview",
+        display_name="Gemini 3.1 Flash Image Preview (Nano Banana 2)",
+        short_name="Nano Banana 2",
+        capabilities=INTERIOR_IMAGE_CAPABILITIES,
+        legacy_capabilities=["text_to_image", "image_to_image"],
+        modality=["text_input", "image_input", "image_output"],
+        api_surface="gemini_generate_content",
+        recommended=True,
+        deprecated=False,
+        preview=True,
+        costly=True,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["gemini_compatible"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="GEMINI_API_KEY",
+        official_endpoint_family="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        base_url="https://generativelanguage.googleapis.com/v1beta",
+        default_endpoint_path="/models/gemini-3.1-flash-image-preview:generateContent",
+        request_schema_type="gemini_generate_content",
+        response_schema_type="gemini_candidates_text_or_image",
+        priority=40,
+        hidden=False,
+        needs_official_id_verification=False,
+        status_reason=None,
+        notes="Gemini image preview model for fast image workflows.",
+    ),
+    ModelRegistryEntry(
+        provider_id="volcengine_ark",
+        provider_label="Volcengine Ark",
+        provider_family="volcengine",
+        model_id="doubao-seedream-5-0-260128",
+        display_name="Seedream 5.0",
+        short_name="Seedream 5.0",
+        capabilities=["image_generation", "image_edit"],
+        legacy_capabilities=["text_to_image", "image_to_image"],
+        modality=["text_input", "image_input", "image_output"],
+        api_surface="volcengine_ark",
+        recommended=True,
+        deprecated=False,
+        preview=False,
+        costly=True,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["openai_compatible", "custom_rest"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="ARK_API_KEY",
+        official_endpoint_family="volcengine_ark",
+        endpoint="https://ark.volcengineapi.com",
+        base_url="https://ark.volcengineapi.com/api/v3",
+        default_endpoint_path="/images/generations",
+        request_schema_type="ark_image_generation",
+        response_schema_type="ark_image",
+        priority=12,
+        notes="Volcengine official release notes list this Seedream 5.0 model id.",
+    ),
+    ModelRegistryEntry(
+        provider_id="volcengine_ark",
+        provider_label="Volcengine Ark",
+        provider_family="volcengine",
+        model_id="doubao-seedream-5-0-lite-260128",
+        display_name="Seedream 5.0 Lite",
+        short_name="Seedream 5.0 Lite",
+        capabilities=["image_generation"],
+        legacy_capabilities=["text_to_image"],
+        modality=["text_input", "image_output"],
+        api_surface="volcengine_ark",
+        recommended=True,
+        deprecated=False,
+        preview=False,
+        costly=True,
+        direct_api_supported=True,
+        relay_supported=True,
+        direct_auth_type="api_key",
+        relay_compatibility_modes=["openai_compatible", "custom_rest"],
+        default_routing_mode="direct_api",
+        default_compatibility_mode="native",
+        env_key="ARK_API_KEY",
+        official_endpoint_family="volcengine_ark",
+        endpoint="https://ark.volcengineapi.com",
+        base_url="https://ark.volcengineapi.com/api/v3",
+        default_endpoint_path="/images/generations",
+        request_schema_type="ark_image_generation",
+        response_schema_type="ark_image",
+        priority=13,
+        notes="Volcengine official release notes list this Seedream 5.0 lite model id.",
+    ),
+]
+
+
+RELEASE_MODEL_KEYS = frozenset(
+    {
+        ("openai", "gpt-image-2"),
+        ("google_gemini", "gemini-2.5-flash-image"),
+        ("google_gemini", "gemini-3-pro-image-preview"),
+        ("google_gemini", "gemini-3.1-flash-image-preview"),
+        ("zhipu_glm", "glm-4.5v"),
+        ("zai_glm", "glm-4.5v"),
+    }
+)
+
+
+DEPRECATED_HIDDEN_MODEL_IDS = {
+    "relay-text-smoke-test",
+    "studio-custom-image",
+    "custom-rest-model",
+    "gpt-4o-mini",
+    "gpt-5.2",
+    "gpt-5-mini",
+    "gpt-5-nano",
+    "gpt-image-1",
+    "gpt-image-1-mini",
+    "unresolved:gpt-image-2",
+    "gemini-2.5-flash-image-preview",
+    "gemini-2.0-flash-preview-image-generation",
+    "gemini-3-pro-preview",
+    "unresolved:gemini-3.1-flash-image-preview",
+    "jimeng-4.0-image",
+    "jimeng-text-to-image-3.0",
+    "jimeng-image-4.0",
+    "jimeng-consumer-app",
+}
+
+
+MODULE_MODEL_PREFERENCES: dict[str, list[str]] = {
+    "floorplan": ["gpt-image-2", "gemini-2.5-flash-image"],
+    "boards": ["gpt-image-2", "gemini-2.5-flash-image"],
+    "room_board_extraction": ["glm-4.5v"],
+    "multi_room_board_extraction": ["glm-4.5v"],
+    "space_render": ["gpt-image-2", "gemini-2.5-flash-image"],
+    "image_editing": ["gpt-image-2", "gemini-2.5-flash-image"],
+    "fast_draft": ["gpt-image-2", "gemini-2.5-flash-image"],
+}
+
+
+def registry_as_dicts(include_hidden: bool = True) -> list[dict[str, Any]]:
+    return [asdict(entry) for entry in MODEL_REGISTRY if include_hidden or not entry.hidden]
+
+
+def visible_registry() -> list[ModelRegistryEntry]:
+    return release_registry()
+
+
+def release_registry() -> list[ModelRegistryEntry]:
+    return [
+        entry
+        for entry in MODEL_REGISTRY
+        if (entry.provider_id, entry.model_id) in RELEASE_MODEL_KEYS and entry.enabled and not entry.hidden
+    ]
+
+
+def model_config_payload(entry: ModelRegistryEntry) -> dict[str, Any]:
+    provider_type = {
+        "openai": "built_in_official",
+        "gemini": "built_in_official",
+        "zhipu": "built_in_official",
+        "volcengine": "built_in_official",
+        "local": "local",
+        "custom": "custom_rest" if entry.provider_id == "custom_rest" else "openai_compatible",
+    }.get(entry.provider_family, "built_in_official")
+    extra = {
+        "label": entry.display_name,
+        "provider_id": entry.provider_id,
+        "provider_label": entry.provider_label,
+        "provider_family": entry.provider_family,
+        "model_id": entry.model_id,
+        "model_label": entry.display_name,
+        "display_name": entry.display_name,
+        "short_name": entry.short_name,
+        "capability": _registry_primary_capability(entry),
+        "capabilities": entry.capabilities,
+        "modality": entry.modality,
+        "api_surface": entry.api_surface,
+        "recommended": entry.recommended,
+        "deprecated": entry.deprecated,
+        "preview": entry.preview,
+        "costly": entry.costly,
+        "direct_api_supported": entry.direct_api_supported,
+        "relay_supported": entry.relay_supported,
+        "direct_auth_type": entry.direct_auth_type,
+        "relay_compatibility_modes": entry.relay_compatibility_modes,
+        "compatibility_mode": entry.default_compatibility_mode,
+        "api_key_name": entry.env_key,
+        "required_auth_fields": required_auth_fields(entry),
+        "default_endpoint_path": entry.default_endpoint_path,
+        "request_schema_type": entry.request_schema_type,
+        "response_schema_type": entry.response_schema_type,
+        "official_endpoint_family": entry.official_endpoint_family,
+        "needs_official_id_verification": entry.needs_official_id_verification,
+        "status_reason": entry.status_reason,
+        "hidden": entry.hidden,
+        "notes": entry.notes,
+    }
+    return {
+        "provider_type": provider_type,
+        "provider_name": entry.provider_label,
+        "routing_mode": entry.default_routing_mode,
+        "endpoint": entry.endpoint,
+        "base_url": entry.base_url,
+        "model_name": entry.model_id,
+        "capabilities_json": json.dumps(entry.legacy_capabilities, ensure_ascii=False),
+        "timeout_sec": 900 if "image_output" in entry.modality else 120,
+        "max_concurrency": 1 if entry.costly else 4,
+        "is_default": entry.priority == 10,
+        "is_enabled": entry.enabled,
+        "priority": entry.priority,
+        "tags_json": json.dumps(_tags(entry), ensure_ascii=False),
+        "extra_config_json": json.dumps(extra, ensure_ascii=False),
+    }
+
+
+def required_auth_fields(entry: ModelRegistryEntry) -> list[str]:
+    if entry.default_routing_mode == "relay_base_url":
+        return ["base_url", "api_key_or_headers"]
+    if entry.direct_auth_type == "api_key":
+        return ["api_key"]
+    if entry.direct_auth_type == "base_url":
+        return ["base_url"]
+    return ["api_key"]
+
+
+def registry_audit() -> dict[str, Any]:
+    return {
+        "models": [asdict(entry) for entry in release_registry()],
+        "removed_or_hidden_model_ids": sorted(DEPRECATED_HIDDEN_MODEL_IDS),
+        "module_model_preferences": MODULE_MODEL_PREFERENCES,
+        "notes": [
+            "Backend model registry is the authoritative source for seeded provider configs.",
+            "Frontend must load provider data from the API and must not present mock provider success state.",
+        ],
+    }
+
+
+def _legacy_primary_capability(legacy: list[str], modern: list[str]) -> str:
+    joined = " ".join([*legacy, *modern])
+    if "image" in joined or "inpaint" in joined or "upscale" in joined:
+        return "image"
+    return "text"
+
+
+def _registry_primary_capability(entry: ModelRegistryEntry) -> str:
+    if entry.provider_id in {"custom_openai", "openai_compatible_custom"}:
+        return "text"
+    return _legacy_primary_capability(entry.legacy_capabilities, entry.capabilities)
+
+
+def _tags(entry: ModelRegistryEntry) -> list[str]:
+    tags: list[str] = []
+    if entry.recommended:
+        tags.append("recommended")
+    if entry.preview:
+        tags.append("preview")
+    if entry.deprecated:
+        tags.append("deprecated")
+    if entry.costly:
+        tags.append("cost_risk")
+    if entry.needs_official_id_verification:
+        tags.append("needs_official_id_verification")
+    if entry.status_reason:
+        tags.append(entry.status_reason)
+    return tags

@@ -1,0 +1,105 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+secrets.json
+**/secrets.json
+*.pem
+*.key
+*.private
+
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.python_packages/
+.venv/
+venv/
+.runtime-venv/
+
+# Frontend
+node_modules/
+app/node_modules/
+app/dist/
+app/.vite/
+
+# Proprietary mobile applications are maintained outside the public desktop tree
+mobile-expo/
+mobile-ios/
+packages/shared-api/
+app/src-tauri/icons/android/
+app/src-tauri/icons/ios/
+backend/scripts/check_mobile_real_model.py
+scripts/generate-brand-icons.py
+
+# Internal mobile/release records retained locally outside the public desktop tree
+THIRD_PARTY_LICENSES/EXPO-MIT.txt
+MOBILE_ARCHITECTURE.md
+PLATFORM_FEATURE_MATRIX.md
+CODEBASE_AUDIT.md
+CLEANUP_REPORT.md
+DELETION_REVIEW.md
+LOCAL_DEPLOYMENT_AUDIT.md
+LOCAL_DEPLOYMENT_TEST_PLAN.md
+MODEL_ENDPOINT_AUDIT.md
+TEST_REPORT.md
+RELEASE_READINESS.md
+docs/CLOSED_RELEASE_GATE_20260716.md
+docs/MOBILE_CRASH_AUDIT_20260716.md
+docs/PRE_PACKAGE_DELIVERY_CHECKLIST.md
+docs/QUALITY_SCORE_20260716.md
+docs/RELEASE_SOURCE_OF_TRUTH_20260716.md
+
+# Local data, generated outputs, and workspace files
+workspace/
+outputs/
+manual-acceptance/runtime/
+backend/data/
+backend/**/*.log
+*.log
+*.sqlite
+*.sqlite3
+*.db
+*.db-*
+
+# Local model files and model caches
+models/
+local-models/
+*.safetensors
+*.ckpt
+*.gguf
+*.onnx
+
+# Tauri / Rust
+app/src-tauri/binaries/
+app/src-tauri/target/
+target/
+
+# Xcode / Apple signing
+DerivedData/
+*.xcuserstate
+*.xcuserdata/
+*.mobileprovision
+*.provisionprofile
+*.p8
+*.p12
+*.cer
+*.certSigningRequest
+
+# Android / Gradle / signing
+.gradle/
+**/.gradle/
+**/build/
+*.keystore
+*.jks
+*.store
+*.apk
+*.aab
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.claude/

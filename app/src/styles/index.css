@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #eef2f7;
+  color: #0b1736;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.panel-surface {
+  @apply rounded-lg border border-studio-border bg-white shadow-panel;
+}
+
+.panel-muted {
+  @apply rounded-lg border border-studio-border bg-studio-panelBg;
+}
+
+.tag-chip {
+  @apply rounded-full border border-studio-border bg-white px-3 py-1 text-xs font-medium text-studio-ink;
+}
+
+.page-stack {
+  @apply space-y-4 pb-4;
+}
+
+.page-hero {
+  @apply rounded-lg border border-studio-border bg-white p-5 shadow-panel;
+}
+
+.eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.08em] text-studio-primaryHover;
+}
+
+.hero-title {
+  @apply mt-2 text-2xl font-semibold text-studio-navy;
+}
+
+.section-title {
+  @apply text-lg font-semibold text-studio-navy;
+}
+
+.body-muted {
+  @apply text-sm leading-6 text-studio-mutedText;
+}
+
+.section-header {
+  @apply mb-3 flex flex-wrap items-center justify-between gap-3;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-lg bg-studio-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-studio-primaryHover active:bg-studio-primaryHover disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-lg border border-studio-border bg-white px-4 py-2.5 text-sm font-semibold text-studio-ink transition hover:border-studio-primary hover:text-studio-navy active:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500;
+}
+
+.form-field {
+  @apply h-10 rounded-lg border border-studio-border bg-white px-3 text-sm font-medium text-studio-navy outline-none transition placeholder:text-slate-500 hover:border-slate-400 focus:border-studio-primary focus:ring-2 focus:ring-teal-500/15 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500;
+}
+
+.textarea-field {
+  @apply rounded-lg border border-studio-border bg-white p-3 text-sm text-studio-navy outline-none transition placeholder:text-slate-500 hover:border-slate-400 focus:border-studio-primary focus:ring-2 focus:ring-teal-500/15 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500;
+}
+
+.status-pill {
+  @apply rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-studio-ink;
+}
+
+.thumbnail-placeholder {
+  @apply rounded-lg border border-dashed border-studio-border bg-gradient-to-br from-teal-50 via-white to-slate-100 text-sm font-medium text-studio-mutedText;
+}
+
+.soft-alert {
+  @apply rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800;
+}
+
+.workspace-scroll {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.workspace-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.workspace-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.workspace-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}

@@ -1,0 +1,9 @@
+{
+  "name": "HavenFrame Acceptance Sample",
+  "client_name": "QA Sample Client",
+  "style_tags": "现代暖调, 自然材质, 低饱和",
+  "room_types": "客厅, 餐厅, 主卧",
+  "budget_min": 180000,
+  "budget_max": 260000,
+  "description": "三口之家，重视收纳、自然采光和耐用材料。客厅需要阅读区，餐厅容纳六人，主卧增加梳妆与衣物收纳。"
+}

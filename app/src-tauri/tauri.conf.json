@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "HavenFrame",
+  "version": "0.2.0-rc.12",
+  "identifier": "com.havenframe.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev -- --host 127.0.0.1 --port 5173 --strictPort",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist",
+    "devUrl": "http://127.0.0.1:5173"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "HavenFrame",
+        "width": 1600,
+        "height": 980,
+        "minWidth": 1280,
+        "minHeight": 820
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "externalBin": ["binaries/qigou-backend-sidecar"],
+    "publisher": "HavenFrame",
+    "category": "GraphicsAndDesign",
+    "shortDescription": "HavenFrame interior AI delivery workspace",
+    "longDescription": "HavenFrame manages interior design projects, AI image generation, model configuration, and local project archives.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper",
+        "silent": true
+      }
+    }
+  }
+}

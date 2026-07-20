@@ -1,0 +1,70 @@
+name: Source validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      LIVE_COSTLY_MODEL_TESTS: "0"
+      QIGOU_API_PROFILE: desktop_client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Install backend dependencies
+        run: python -m pip install -r backend/requirements.txt
+      - name: Install desktop frontend dependencies
+        working-directory: app
+        run: npm ci
+      - name: Backend tests
+        run: python -m pytest backend/tests -q
+      - name: Python dependency consistency
+        run: python -m pip check
+      - name: Desktop dependency audit
+        working-directory: app
+        run: npm audit --audit-level=high
+      - name: Desktop source validation
+        working-directory: app
+        run: |
+          npm run typecheck
+          npm run test:i18n
+          npm run test:model-routing
+          npm run test:model-selection-runtime
+          npm run test:independent-board-workflows
+          npm run test:workflow-history
+          npm run build
+      - name: Tauri source validation
+        shell: pwsh
+        run: |
+          # Tauri validates externalBin paths before cargo check. Release sidecars
+          # are intentionally built only on authorized local machines, so CI uses
+          # an untracked empty path placeholder for config parsing only.
+          $placeholder = "app/src-tauri/binaries/qigou-backend-sidecar-x86_64-pc-windows-msvc.exe"
+          New-Item -ItemType Directory -Force -Path (Split-Path $placeholder) | Out-Null
+          New-Item -ItemType File -Force -Path $placeholder | Out-Null
+          cargo check --locked --manifest-path app/src-tauri/Cargo.toml
+      - name: Secret scan
+        run: python scripts/secret_scan.py --json
+
+      # Windows installers are intentionally excluded. Release artifacts are
+      # built and verified only on authorized local machines.

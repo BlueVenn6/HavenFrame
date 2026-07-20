@@ -19,7 +19,7 @@ def test_healthcheck(client: TestClient):
 
 
 def test_core_routers_are_registered(client: TestClient):
-    routes = {route.path for route in client.app.routes if hasattr(route, "path")}
+    routes = set(client.app.openapi()["paths"])
 
     assert "/api/projects" in routes
     assert "/api/tasks" in routes

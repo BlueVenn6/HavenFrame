@@ -225,7 +225,7 @@ from backend.db.models import Asset
 from backend.main import app
 
 with TestClient(app) as client:
-    routes = {route.path for route in app.routes if hasattr(route, "path")}
+    routes = set(app.openapi()["paths"])
     no_auth = client.get("/api/projects")
     auth = client.get("/api/projects", headers={"Authorization": "Bearer cloud-test-token"})
     with SessionLocal() as db:

@@ -1,5 +1,10 @@
 # HavenFrame / 栖构 Desktop
 
+[![Source validation](https://github.com/BlueVenn6/HavenFrame/actions/workflows/source-validation.yml/badge.svg)](https://github.com/BlueVenn6/HavenFrame/actions/workflows/source-validation.yml)
+![Platform](https://img.shields.io/badge/platform-Windows-0078D4)
+[![Latest pre-release](https://img.shields.io/github/v/release/BlueVenn6/HavenFrame?include_prereleases&label=pre-release)](https://github.com/BlueVenn6/HavenFrame/releases)
+[![License](https://img.shields.io/github/license/BlueVenn6/HavenFrame)](LICENSE)
+
 [中文概览](#中文概览) | [English overview](#english-overview) | [中英双语使用说明 / Bilingual user guide](docs/USER_GUIDE_BILINGUAL.md)
 
 ## 界面预览 / Interface previews

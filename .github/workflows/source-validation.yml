@@ -20,7 +20,7 @@ jobs:
       LIVE_COSTLY_MODEL_TESTS: "0"
       QIGOU_API_PROFILE: desktop_client
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"

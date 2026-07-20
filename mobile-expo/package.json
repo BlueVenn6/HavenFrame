@@ -11,7 +11,7 @@
     "expo-image-picker": "~56.0.21",
     "expo-localization": "~56.0.6",
     "expo-secure-store": "~56.0.4",
-    "expo-status-bar": "~56.0.4",
+    "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.85.3",

@@ -7,7 +7,7 @@
     "@react-native-picker/picker": "2.11.4",
     "expo": "~56.0.16",
     "expo-file-system": "~56.0.8",
-    "expo-image-manipulator": "~56.0.22",
+    "expo-image-manipulator": "~57.0.5",
     "expo-image-picker": "~56.0.21",
     "expo-localization": "~56.0.6",
     "expo-secure-store": "~56.0.4",

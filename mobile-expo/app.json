@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "HavenFrame",
+    "slug": "havenframe-mobile",
+    "version": "1.1.3",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "havenframe",
+    "locales": {
+      "en": "./locales/en.json",
+      "zh-Hans": "./locales/zh-Hans.json",
+      "zh-Hant": "./locales/zh-Hant.json"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.havenframe.mobile",
+      "buildNumber": "5",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow HavenFrame to select floor plans, room images, and reference images for your projects.",
+        "NSPhotoLibraryAddUsageDescription": "Allow HavenFrame to save generated results to your photo library."
+      }
+    },
+    "android": {
+      "package": "com.havenframe.mobile",
+      "versionCode": 5,
+      "permissions": [
+        "READ_MEDIA_IMAGES",
+        "READ_EXTERNAL_STORAGE"
+      ],
+      "blockedPermissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "./plugins/with-local-android-build",
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow HavenFrame to select floor plans, room images, and reference images for your projects."
+        }
+      ],
+      "expo-localization"
+    ]
+  }
+}

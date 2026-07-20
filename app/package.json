@@ -1,0 +1,42 @@
+{
+  "name": "qigou-cn-app",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "version": "0.2.0-rc.12",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "test:model-routing": "node scripts/test-model-routing-page.mjs",
+    "test:model-selection-runtime": "node scripts/test-model-selection-runtime.mjs",
+    "test:workflow-history": "node scripts/test-workflow-history.mjs",
+    "test:independent-board-workflows": "node scripts/test-independent-board-workflows.mjs",
+    "test:i18n": "node scripts/test-i18n.mjs",
+    "build": "tsc && vite build && python ../scripts/validate-release-security.py --dist dist",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "backend:sidecar": "cd .. && python scripts/build-backend-sidecar.py",
+    "desktop:build": "python ../scripts/build-desktop-local.py --no-bundle",
+    "desktop:build:bundle": "python ../scripts/build-desktop-local.py"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.83.0",
+    "@tauri-apps/api": "^2.11.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.4",
+    "zustand": "^5.0.7"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.1",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3",
+    "vite": "^7.3.6"
+  }
+}

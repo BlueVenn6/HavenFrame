@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "栖構",
+    "CFBundleName": "栖構",
+    "NSPhotoLibraryUsageDescription": "用於選擇平面圖、房間圖和參考圖並加入栖構項目。",
+    "NSPhotoLibraryAddUsageDescription": "用於將生成結果儲存到相簿。"
+  },
+  "android": {
+    "app_name": "栖構"
+  }
+}

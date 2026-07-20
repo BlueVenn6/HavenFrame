@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "HavenFrame",
+    "CFBundleName": "HavenFrame",
+    "NSPhotoLibraryUsageDescription": "Allow HavenFrame to select floor plans, room images, and reference images for your projects.",
+    "NSPhotoLibraryAddUsageDescription": "Allow HavenFrame to save generated results to your photo library."
+  },
+  "android": {
+    "app_name": "HavenFrame"
+  }
+}

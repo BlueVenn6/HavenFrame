@@ -1,0 +1,49 @@
+{
+  "health": "GET /health",
+  "platformCapabilities": "GET /api/platform/capabilities",
+  "projects": {
+    "list": "GET /api/projects",
+    "create": "POST /api/projects",
+    "detail": "GET /api/projects/{project_id}",
+    "review": "GET /api/projects/{project_id}/review"
+  },
+  "assets": {
+    "upload": "POST /api/assets/upload",
+    "list": "GET /api/assets?project_id={project_id}",
+    "detail": "GET /api/assets/{asset_id}",
+    "content": "GET /api/assets/{asset_id}/content"
+  },
+  "tasks": {
+    "list": "GET /api/tasks?project_id={project_id}",
+    "submitProviderImage": "POST /api/tasks/provider-image",
+    "detail": "GET /api/tasks/{task_id}",
+    "result": "GET /api/tasks/{task_id}/result",
+    "cancel": "POST /api/tasks/{task_id}/cancel",
+    "retry": "POST /api/tasks/{task_id}/retry"
+  },
+  "workflows": {
+    "extractBoardItems": "POST /api/workflows/softboard/extract-items",
+    "singleRoomBoard": "POST /api/workflows/softboard/single-room",
+    "multiRoomBoard": "POST /api/workflows/softboard/multi-room",
+    "boardDocuments": "GET /api/workflows/softboard/documents?project_id={project_id}"
+  },
+  "prompts": {
+    "list": "GET /api/prompts",
+    "create": "POST /api/prompts"
+  },
+  "customTasks": {
+    "templates": "GET /api/custom-tasks/templates",
+    "createTemplate": "POST /api/custom-tasks/templates"
+  },
+  "models": {
+    "providers": "GET /api/models/providers",
+    "saveMobileRoute": "POST /api/models/mobile-routes",
+    "modulePreferences": "GET /api/models/module-preferences",
+    "safeTestAll": "POST /api/models/test-all"
+  },
+  "exports": {
+    "reportImage": "POST /api/exports/report-image",
+    "structuredTable": "POST /api/exports/table",
+    "content": "GET /api/exports/{export_id}/content"
+  }
+}

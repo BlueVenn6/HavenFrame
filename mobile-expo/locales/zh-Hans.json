@@ -1,0 +1,11 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "栖构",
+    "CFBundleName": "栖构",
+    "NSPhotoLibraryUsageDescription": "用于选择平面图、房间图和参考图上传到栖构项目。",
+    "NSPhotoLibraryAddUsageDescription": "用于保存生成结果到相册。"
+  },
+  "android": {
+    "app_name": "栖构"
+  }
+}

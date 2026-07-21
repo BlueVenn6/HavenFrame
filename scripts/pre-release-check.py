@@ -30,8 +30,7 @@ REQUIRED_GITIGNORE_PATTERNS = [
     "*.ckpt",
     "*.gguf",
 ]
-SAFE_CHECK_NAMES = {
-    "python_dependency_check",
+HEAVY_CHECK_NAMES = (
     "backend_tests",
     "frontend_model_routing_test",
     "frontend_model_selection_runtime_test",
@@ -39,6 +38,8 @@ SAFE_CHECK_NAMES = {
     "frontend_independent_board_workflows",
     "frontend_workflow_history",
     "frontend_build",
+)
+STATIC_CHECK_NAMES = (
     "secret_scan",
     "gitignore_sensitive_rules",
     "open_source_license",
@@ -75,7 +76,7 @@ SAFE_CHECK_NAMES = {
     "security_context_enabled",
     "data_flow_confirmed_enforced",
     "platform_capability_isolation",
-}
+)
 
 
 def main() -> int:
@@ -181,10 +182,18 @@ def main() -> int:
     checks.append(_file_contains_check(root / "backend/core/platform_capabilities.py", "platform_capability_isolation", ["local_file_open", "API_PROFILE_CLOUD"]))
 
     failed = [item for item in checks if not item[1]]
-    # Check details may contain subprocess output. Emit only allowlisted names;
-    # provider and tool diagnostics never reach terminal logs.
-    for name, ok, _detail in checks:
-        print(f"{'PASS' if ok else 'FAIL'} {_safe_check_name(name)}")
+    # Names come from a separate constant manifest. The result container may
+    # hold sensitive diagnostics, so no printable value is read from it.
+    output_names = ("python_dependency_check",)
+    if not args.skip_heavy:
+        output_names += HEAVY_CHECK_NAMES
+    output_names += STATIC_CHECK_NAMES
+    if len(output_names) != len(checks):
+        print("FAIL release_check_manifest")
+        return 1
+    for output_name, result in zip(output_names, checks, strict=True):
+        status = "PASS" if result[1] else "FAIL"
+        print(f"{status} {output_name}")
     return 1 if failed else 0
 
 
@@ -305,10 +314,6 @@ def _tracked_sensitive(path: str) -> bool:
 
 def _npm_command() -> str:
     return shutil.which("npm.cmd") or shutil.which("npm") or "npm"
-
-
-def _safe_check_name(name: str) -> str:
-    return name if name in SAFE_CHECK_NAMES else "release_check"
 
 
 if __name__ == "__main__":

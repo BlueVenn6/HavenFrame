@@ -93,12 +93,22 @@ def validate_provider(config_id: int, db: Session = Depends(get_db)) -> dict:
 
 @router.post("/test")
 def test_model_connection(payload: ModelConnectivityTestRequest, db: Session = Depends(get_db)) -> dict:
-    return model_service.test_model_connection(db, payload.model_dump())
+    return _public_connectivity_result(model_service.test_model_connection(db, payload.model_dump()))
 
 
 @router.post("/test-all")
 def test_all_configured_models(payload: TestAllConfiguredModelsRequest, db: Session = Depends(get_db)) -> list[dict]:
-    return model_service.test_all_configured_models(db, payload.model_dump())
+    return [
+        _public_connectivity_result(result)
+        for result in model_service.test_all_configured_models(db, payload.model_dump())
+    ]
+
+
+def _public_connectivity_result(result: dict) -> dict:
+    """Keep provider diagnostics internal while returning stable UI-safe fields."""
+    public_result = dict(result)
+    public_result.pop("raw_error_preview", None)
+    return public_result
 
 
 @router.get("/capabilities")

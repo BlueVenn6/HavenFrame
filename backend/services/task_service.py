@@ -6,6 +6,7 @@ import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 from sqlalchemy.orm import Session
 
@@ -730,8 +731,8 @@ def _should_fallback_to_official_openai(runtime: dict[str, Any], request: OpenAI
         return False
     if not request.model_id.startswith("gpt-image"):
         return False
-    base_url = str(request.base_url or "").lower()
-    if "api.openai.com" in base_url:
+    base_url_host = (urlparse(str(request.base_url or "")).hostname or "").lower()
+    if base_url_host == "api.openai.com":
         return False
     routing_mode = str(runtime.get("routing_mode") or "").lower()
     compatibility_mode = str(runtime.get("compatibility_mode") or "").lower()

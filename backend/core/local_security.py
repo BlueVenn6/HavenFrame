@@ -59,6 +59,9 @@ def get_local_api_token() -> str:
 
 def issue_local_session(response: Response) -> dict[str, str]:
     token = get_local_api_token()
+    # The packaged sidecar is HTTP loopback-only. A Secure cookie would not be
+    # returned reliably by every supported WebView to http://127.0.0.1:8010.
+    # Host, Origin, Fetch-Site, and token checks enforce the local boundary.
     response.set_cookie(
         LOCAL_TOKEN_COOKIE,
         token,

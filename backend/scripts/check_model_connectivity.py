@@ -330,7 +330,7 @@ def _progress_line(config: dict[str, Any], result: dict[str, Any]) -> str:
     provider_id = config.get("provider_id") or "unknown_provider"
     display_name = config.get("display_name") or config.get("model_id") or "unknown_model"
     routing_mode = config.get("routing_mode") or "unknown_routing"
-    status = result.get("status_label") or result.get("error_type") or ("ok" if result.get("ok") else "failed")
+    status = _safe_status_label(result)
     prefix = "relay" if routing_mode == "relay_base_url" else provider_id
     details = ""
     if routing_mode == "relay_base_url":
@@ -338,6 +338,34 @@ def _progress_line(config: dict[str, Any], result: dict[str, Any]) -> str:
         if endpoint_path:
             details = f" endpoint_used={endpoint_path} status={result.get('status_code') or 'n/a'} ok={str(bool(result.get('ok'))).lower()} fallback={str(bool(result.get('fallback_used'))).lower()}"
     return f"[{prefix}] {display_name} {routing_mode} -> {str(status).lower()}{details}"
+
+
+def _safe_status_label(result: dict[str, Any]) -> str:
+    label = str(result.get("status_label") or "").upper()
+    allowed = {
+        "LIVE_OK",
+        "LIVE_FAILED",
+        "RELAY_CONFIRMED_LIVE",
+        "RELAY_MISSING_BASE_URL",
+        "RELAY_MISSING_API_KEY",
+        "RELAY_TIMEOUT",
+        "RELAY_AUTH_ERROR",
+        "RELAY_PROVIDER_ERROR",
+        "RELAY_RESPONSE_PARSE_ERROR",
+        "NOT_TESTED_MISSING_CREDENTIALS",
+        "NOT_TESTED_MISSING_BASE_URL",
+        "NEEDS_OFFICIAL_ID_VERIFICATION",
+        "UNSUPPORTED_AUTH",
+        "UNSUPPORTED_CONSUMER_APP",
+        "SKIPPED_COST_RISK",
+        "INVALID_SECRET_PLACEHOLDER",
+        "INVALID_SECRET_FORMAT",
+        "INVALID_HEADER_VALUE",
+        "INVALID_BASE_URL",
+    }
+    if label in allowed:
+        return label
+    return "LIVE_OK" if result.get("ok") else "LIVE_FAILED"
 
 
 def _safe_endpoint_path(endpoint: str | None) -> str:

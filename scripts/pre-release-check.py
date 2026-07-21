@@ -135,8 +135,8 @@ def main() -> int:
     checks.append(_file_contains_check(root / "backend/core/platform_capabilities.py", "platform_capability_isolation", ["local_file_open", "API_PROFILE_CLOUD"]))
 
     failed = [item for item in checks if not item[1]]
-    for name, ok, detail in checks:
-        print(f"{'PASS' if ok else 'FAIL'} {name}: {detail}")
+    for name, ok, _detail in checks:
+        print(f"{'PASS' if ok else 'FAIL'} {name}")
     return 1 if failed else 0
 
 

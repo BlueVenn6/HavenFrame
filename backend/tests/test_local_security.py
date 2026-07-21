@@ -22,6 +22,9 @@ def test_security_session_allows_same_origin_api_access(test_database_url: str):
     with TestClient(app) as raw_client:
         session = raw_client.get("/api/security/session", headers={"origin": "http://127.0.0.1:5173"})
         assert session.status_code == 200
+        cookie = session.headers["set-cookie"].lower()
+        assert "httponly" in cookie
+        assert "samesite=strict" in cookie
         token = session.json()["token"]
         response = raw_client.get(
             "/api/projects",

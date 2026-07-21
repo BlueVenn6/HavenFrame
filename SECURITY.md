@@ -19,6 +19,17 @@ This public repository covers the HavenFrame Windows desktop application only. A
 - 内嵌 FastAPI sidecar 只监听 `127.0.0.1:8010`，并校验 service identity 与 API contract。
 - 官方 Provider 与用户配置的 HTTPS 中转会收到用户明确选择发送的图片、提示词和参数。
 
+## Loopback session boundary / 本地回环会话边界
+
+- The packaged FastAPI sidecar is an HTTP service bound exclusively to `127.0.0.1:8010`; it is not exposed on a LAN or public interface.
+- Its random local session token is stored outside the repository with owner-only file permissions where supported. Requests are additionally restricted by Host, Origin, Fetch-Site, constant-time token comparison, and an `HttpOnly; SameSite=Strict` cookie.
+- The cookie intentionally does not use `Secure` because supported Windows WebViews do not consistently return Secure cookies to the HTTP loopback origin. This exception is valid only while the service remains loopback-only. The token must never enter logs, task snapshots, exports, or Git.
+- Packaged image elements may use the same short local token in a loopback-only asset URL because HTML image requests cannot attach the application header. Moving the service off loopback requires replacing this mechanism before release.
+- 内嵌 FastAPI sidecar 仅绑定 `127.0.0.1:8010` 的 HTTP 回环地址，不监听局域网或公网接口。
+- 随机本地会话 token 保存在仓库外；平台支持时文件权限仅限当前用户。请求还会校验 Host、Origin、Fetch-Site，并使用常量时间 token 比较及 `HttpOnly; SameSite=Strict` Cookie。
+- Cookie 有意不设置 `Secure`，因为受支持的 Windows WebView 不一定会把 Secure Cookie 返回给 HTTP 回环地址。该例外仅在服务保持 loopback-only 时成立；token 禁止进入日志、任务快照、导出或 Git。
+- 安装版图片元素可能在仅回环可见的资源 URL 中携带同一短 token，因为 HTML 图片请求无法附加应用 Header。若服务未来离开回环地址，发布前必须替换此机制。
+
 ## Reporting a vulnerability / 报告安全问题
 
 Do not include API keys, customer materials, private endpoints, or exploitable details in a public issue. Use GitHub private vulnerability reporting when available.

@@ -491,7 +491,7 @@ def test_openai_relay_missing_api_key_returns_missing_api_key():
 
 def test_gemini_adapter_normalizes_mocked_http_response():
     def handler(request: httpx.Request) -> httpx.Response:
-        assert "generativelanguage.googleapis.com" in str(request.url)
+        assert request.url.host == "generativelanguage.googleapis.com"
         assert request.headers["x-goog-api-key"] == "gemini-secret"
         return httpx.Response(
             200,
@@ -515,6 +515,31 @@ def test_gemini_adapter_normalizes_mocked_http_response():
     assert result["ok"] is True
     assert result["normalized_output"] == "OK"
     assert "gemini-secret" not in (result["endpoint_used"] or "")
+
+
+def test_model_test_api_does_not_expose_internal_provider_error_preview(client: TestClient, monkeypatch):
+    from backend.services import model_service
+
+    monkeypatch.setattr(
+        model_service,
+        "test_model_connection",
+        lambda _db, _payload: {
+            "ok": False,
+            "error_type": "provider_error",
+            "error": "Provider request failed.",
+            "raw_error_preview": "Traceback: internal-secret",
+        },
+    )
+
+    response = client.post(
+        "/api/models/test",
+        json={"provider_id": "openai", "model_id": "gpt-test"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["error"] == "Provider request failed."
+    assert "raw_error_preview" not in response.json()
+    assert "internal-secret" not in response.text
 
 
 def test_gemini_parse_error_is_structured():

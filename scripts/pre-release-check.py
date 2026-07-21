@@ -200,11 +200,11 @@ def _command_check(name: str, cmd: list[str], cwd: Path) -> tuple[str, bool, str
             stderr=subprocess.STDOUT,
             timeout=900,
         )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return name, False, str(exc)
+    except (OSError, subprocess.TimeoutExpired):
+        return name, False, "command_unavailable_or_timed_out"
     if result.returncode == 0:
         return name, True, "ok"
-    return name, False, _last_lines(result.stdout)
+    return name, False, f"command_failed_exit_{result.returncode}"
 
 
 def _secret_scan_check(root: Path) -> tuple[str, bool, str]:
@@ -309,11 +309,6 @@ def _npm_command() -> str:
 
 def _safe_check_name(name: str) -> str:
     return name if name in SAFE_CHECK_NAMES else "release_check"
-
-
-def _last_lines(text: str, count: int = 8) -> str:
-    lines = [line for line in text.splitlines() if line.strip()]
-    return " | ".join(lines[-count:])[:1200]
 
 
 if __name__ == "__main__":

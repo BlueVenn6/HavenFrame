@@ -63,7 +63,6 @@ def main() -> int:
             except Exception:
                 result = _local_result(config, "LIVE_FAILED", "Connectivity check failed with an internal error. See tests/logs; secrets were not printed.")
             results.append({**_matrix_row(config, result), "raw_result": result})
-            print(_progress_line(config, result))
 
     audit_path = OUTPUTS_DIR / "model_registry_audit.json"
     json_path = OUTPUTS_DIR / "model_connectivity_report.json"

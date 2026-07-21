@@ -30,6 +30,53 @@ REQUIRED_GITIGNORE_PATTERNS = [
     "*.ckpt",
     "*.gguf",
 ]
+HEAVY_CHECK_NAMES = (
+    "backend_tests",
+    "frontend_model_routing_test",
+    "frontend_model_selection_runtime_test",
+    "frontend_i18n_test",
+    "frontend_independent_board_workflows",
+    "frontend_workflow_history",
+    "frontend_build",
+)
+STATIC_CHECK_NAMES = (
+    "secret_scan",
+    "gitignore_sensitive_rules",
+    "open_source_license",
+    "third_party_notices",
+    "readme_bilingual_overview",
+    "bilingual_user_guide",
+    "desktop_license_metadata",
+    "tauri_license_metadata",
+    "github_source_validation",
+    "github_dependabot",
+    "github_pull_request_template",
+    "github_bug_template",
+    "security_doc",
+    "readme_security_section",
+    "release_notes",
+    "open_source_release_doc",
+    "desktop_bundle_script",
+    "release_version_consistency",
+    "tauri_bundle_config",
+    "tauri_sidecar_config",
+    "tauri_sidecar_startup",
+    "tauri_backend_identity",
+    "frontend_backend_identity",
+    "backend_health_identity",
+    "backend_sidecar_entry",
+    "appdata_runtime_dirs",
+    "backend_sidecar_build_script",
+    "desktop_persistence_gate_enabled",
+    "packaged_sidecar_persistence_gate",
+    "installed_live_provider_gate",
+    "local_token_enabled",
+    "cors_not_wildcard",
+    "api_key_not_plaintext",
+    "security_context_enabled",
+    "data_flow_confirmed_enforced",
+    "platform_capability_isolation",
+)
 
 
 def main() -> int:
@@ -135,8 +182,18 @@ def main() -> int:
     checks.append(_file_contains_check(root / "backend/core/platform_capabilities.py", "platform_capability_isolation", ["local_file_open", "API_PROFILE_CLOUD"]))
 
     failed = [item for item in checks if not item[1]]
-    for name, ok, detail in checks:
-        print(f"{'PASS' if ok else 'FAIL'} {name}: {detail}")
+    # Names come from a separate constant manifest. The result container may
+    # hold sensitive diagnostics, so no printable value is read from it.
+    output_names = ("python_dependency_check",)
+    if not args.skip_heavy:
+        output_names += HEAVY_CHECK_NAMES
+    output_names += STATIC_CHECK_NAMES
+    if len(output_names) != len(checks):
+        print("FAIL release_check_manifest")
+        return 1
+    for output_name, result in zip(output_names, checks, strict=True):
+        status = "PASS" if result[1] else "FAIL"
+        print(f"{status} {output_name}")
     return 1 if failed else 0
 
 
@@ -152,11 +209,11 @@ def _command_check(name: str, cmd: list[str], cwd: Path) -> tuple[str, bool, str
             stderr=subprocess.STDOUT,
             timeout=900,
         )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return name, False, str(exc)
+    except (OSError, subprocess.TimeoutExpired):
+        return name, False, "command_unavailable_or_timed_out"
     if result.returncode == 0:
         return name, True, "ok"
-    return name, False, _last_lines(result.stdout)
+    return name, False, f"command_failed_exit_{result.returncode}"
 
 
 def _secret_scan_check(root: Path) -> tuple[str, bool, str]:
@@ -257,11 +314,6 @@ def _tracked_sensitive(path: str) -> bool:
 
 def _npm_command() -> str:
     return shutil.which("npm.cmd") or shutil.which("npm") or "npm"
-
-
-def _last_lines(text: str, count: int = 8) -> str:
-    lines = [line for line in text.splitlines() if line.strip()]
-    return " | ".join(lines[-count:])[:1200]
 
 
 if __name__ == "__main__":

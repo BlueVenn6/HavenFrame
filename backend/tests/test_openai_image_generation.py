@@ -2,7 +2,11 @@ import base64
 from pathlib import Path
 
 from backend.adapters.openai_image_generation import OpenAIImageRequest, generate_openai_image
-from backend.services.task_service import _generate_openai_image_with_relay_fallback, _generate_provider_image
+from backend.services.task_service import (
+    _generate_openai_image_with_relay_fallback,
+    _generate_provider_image,
+    _should_fallback_to_official_openai,
+)
 
 
 VALID_PNG = base64.b64decode(
@@ -230,6 +234,27 @@ def test_relay_channel_error_falls_back_only_when_explicitly_allowed(monkeypatch
         ("https://relay.example.com/v1", "relay-key"),
         ("https://api.openai.com/v1", "official-key"),
     ]
+
+
+def test_openai_hostname_check_does_not_trust_a_suffix_spoof(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "official-key")
+    runtime = {
+        "routing_mode": "relay_base_url",
+        "compatibility_mode": "openai_compatible",
+    }
+    request = OpenAIImageRequest(
+        base_url="https://api.openai.com.evil.example/v1",
+        api_key="relay-key",
+        model_id="gpt-image-2",
+        prompt="test",
+        timeout_sec=120,
+    )
+
+    assert _should_fallback_to_official_openai(
+        runtime,
+        request,
+        "HTTP 503: no available channel",
+    ) is True
 
 
 def test_provider_image_dispatches_to_gemini_adapter(monkeypatch):

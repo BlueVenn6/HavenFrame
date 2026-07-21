@@ -537,9 +537,39 @@ def test_model_test_api_does_not_expose_internal_provider_error_preview(client: 
     )
 
     assert response.status_code == 200
-    assert response.json()["error"] == "Provider request failed."
+    assert response.json()["error"] == "Provider returned an error."
+    assert response.json()["response_preview"] is None
     assert "raw_error_preview" not in response.json()
     assert "internal-secret" not in response.text
+
+
+def test_model_test_all_api_does_not_expose_internal_provider_diagnostics(client: TestClient, monkeypatch):
+    from backend.services import model_service
+
+    monkeypatch.setattr(
+        model_service,
+        "test_all_configured_models",
+        lambda _db, _payload: [
+            {
+                "ok": False,
+                "provider_id": "openai",
+                "model_id": "gpt-image-2",
+                "error_type": "provider_error",
+                "error": "upstream-secret-error",
+                "response_preview": "provider-secret-response",
+                "raw_error_preview": "Traceback: internal-secret",
+            }
+        ],
+    )
+
+    response = client.post("/api/models/test-all", json={"include_costly": False})
+
+    assert response.status_code == 200
+    result = response.json()[0]
+    assert result["error"] == "Provider returned an error."
+    assert result["response_preview"] is None
+    assert "raw_error_preview" not in result
+    assert "secret" not in response.text
 
 
 def test_gemini_parse_error_is_structured():

@@ -30,6 +30,52 @@ REQUIRED_GITIGNORE_PATTERNS = [
     "*.ckpt",
     "*.gguf",
 ]
+SAFE_CHECK_NAMES = {
+    "python_dependency_check",
+    "backend_tests",
+    "frontend_model_routing_test",
+    "frontend_model_selection_runtime_test",
+    "frontend_i18n_test",
+    "frontend_independent_board_workflows",
+    "frontend_workflow_history",
+    "frontend_build",
+    "secret_scan",
+    "gitignore_sensitive_rules",
+    "open_source_license",
+    "third_party_notices",
+    "readme_bilingual_overview",
+    "bilingual_user_guide",
+    "desktop_license_metadata",
+    "tauri_license_metadata",
+    "github_source_validation",
+    "github_dependabot",
+    "github_pull_request_template",
+    "github_bug_template",
+    "security_doc",
+    "readme_security_section",
+    "release_notes",
+    "open_source_release_doc",
+    "desktop_bundle_script",
+    "release_version_consistency",
+    "tauri_bundle_config",
+    "tauri_sidecar_config",
+    "tauri_sidecar_startup",
+    "tauri_backend_identity",
+    "frontend_backend_identity",
+    "backend_health_identity",
+    "backend_sidecar_entry",
+    "appdata_runtime_dirs",
+    "backend_sidecar_build_script",
+    "desktop_persistence_gate_enabled",
+    "packaged_sidecar_persistence_gate",
+    "installed_live_provider_gate",
+    "local_token_enabled",
+    "cors_not_wildcard",
+    "api_key_not_plaintext",
+    "security_context_enabled",
+    "data_flow_confirmed_enforced",
+    "platform_capability_isolation",
+}
 
 
 def main() -> int:
@@ -135,8 +181,10 @@ def main() -> int:
     checks.append(_file_contains_check(root / "backend/core/platform_capabilities.py", "platform_capability_isolation", ["local_file_open", "API_PROFILE_CLOUD"]))
 
     failed = [item for item in checks if not item[1]]
+    # Check details may contain subprocess output. Emit only allowlisted names;
+    # provider and tool diagnostics never reach terminal logs.
     for name, ok, _detail in checks:
-        print(f"{'PASS' if ok else 'FAIL'} {name}")
+        print(f"{'PASS' if ok else 'FAIL'} {_safe_check_name(name)}")
     return 1 if failed else 0
 
 
@@ -257,6 +305,10 @@ def _tracked_sensitive(path: str) -> bool:
 
 def _npm_command() -> str:
     return shutil.which("npm.cmd") or shutil.which("npm") or "npm"
+
+
+def _safe_check_name(name: str) -> str:
+    return name if name in SAFE_CHECK_NAMES else "release_check"
 
 
 def _last_lines(text: str, count: int = 8) -> str:
